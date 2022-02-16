@@ -62,23 +62,17 @@ public class Manager {
     }
 
     public void createTask(Task task) {
-        if (!tasks.containsKey(task.getId())) {
+            task.setId(getNextTaskId());
             tasks.put(task.getId(), task);
-        } else {
-            System.out.println("Невозможно создать задачу, так как задача с таким id уже существует");
-        }
     }
 
     public void createEpic(Epic epic) {
-        if (!epics.containsKey(epic.getId())) {
+            epic.setId(getNextTaskId());
             epics.put(epic.getId(), epic);
-        } else {
-            System.out.println("Невозможно создать эпик, так как эпик с таким id уже существует");
-        }
     }
 
     public void createSubTask(SubTask subTask) {
-        if (!subTasks.containsKey(subTask.getId())) {
+            subTask.setId(getNextTaskId());
             if (epics.containsKey(subTask.getEpicId())) {
                 Epic epic = epics.get(subTask.getEpicId());
                 epic.addSubtask(subTask);
@@ -87,10 +81,6 @@ public class Manager {
                 System.out.printf("Невозможно создать подзадачу, так как эпик с id %s отсутствует\n",
                     subTask.getEpicId());
             }
-        } else {
-            System.out.printf("Невозможно создать подзадачу, так как подзадача с id %s уже существует\n",
-                subTask.getId());
-        }
     }
 
     public void updateTask(Task task) {

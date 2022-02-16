@@ -8,23 +8,21 @@ public class Main {
     public static void main(String[] args) {
         Manager manager = new Manager();
 
-        Task buyTask = new Task("Метнуться до круглосутки", "Взять пару пив", manager.getNextTaskId(),
-            TaskStatus.NEW);
-        Task keyTask = new Task("Сделать дубликат ключа", "От апартов и подъездный",
-            manager.getNextTaskId(), TaskStatus.NEW);
+        Task buyTask = new Task("Метнуться до круглосутки", "Взять пару пив", TaskStatus.NEW);
+        Task keyTask = new Task("Сделать дубликат ключа", "От апартов и подъездный", TaskStatus.NEW);
         manager.createTask(buyTask);
         manager.createTask(keyTask);
 
-        Epic workEpic = new Epic("Работка", "За денюжку", manager.getNextTaskId());
-        Epic relaxEpic = new Epic("Отдохнуть нормально", "Нормально!", manager.getNextTaskId());
+        Epic workEpic = new Epic("Работка", "За денюжку");
+        Epic relaxEpic = new Epic("Отдохнуть нормально", "Нормально!");
         manager.createEpic(workEpic);
         manager.createEpic(relaxEpic);
 
         SubTask pathToWorkSubTask = new SubTask("Доползти до офиса", "Желательно без опозданий",
-            manager.getNextTaskId(), TaskStatus.NEW, workEpic.getId());
+             TaskStatus.NEW, workEpic.getId());
         SubTask didWorkSubTask= new SubTask("Создать видимость работы", "Желательно правдоподобно",
-            manager.getNextTaskId(), TaskStatus.NEW, workEpic.getId());
-        SubTask relaxSubTask = new SubTask("Глянуть сериальчик", "", manager.getNextTaskId(),
+            TaskStatus.NEW, workEpic.getId());
+        SubTask relaxSubTask = new SubTask("Глянуть сериальчик", "",
             TaskStatus.NEW, relaxEpic.getId());
         manager.createSubTask(pathToWorkSubTask);
         manager.createSubTask(didWorkSubTask);

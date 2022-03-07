@@ -7,39 +7,46 @@ import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
 import ru.tasktracker.tasks.Task;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManager {
 
     private static int tasksCounter = 0;
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
 
+    @Override
     public int getNextTaskId() {
         tasksCounter++;
         return tasksCounter;
     }
 
+    @Override
     public Map<Integer, Epic> getAllEpics() {
         return epics;
     }
 
+    @Override
     public Map<Integer, Task> getAllTasks() {
         return tasks;
     }
 
+    @Override
     public Map<Integer, SubTask> getAllSubTasks() {
         return subTasks;
     }
 
+    @Override
     public void removeAllEpics() {
         epics.clear();
         subTasks.clear();
     }
 
+    @Override
     public void removeAllTasks() {
         tasks.clear();
     }
 
+    @Override
     public void removeAllSubTasks() {
         subTasks.clear();
 
@@ -48,6 +55,7 @@ public class Manager {
         }
     }
 
+    @Override
     public Task getTaskById(int id) {
         if (tasks.containsKey(id)) {
             return tasks.get(id);
@@ -61,28 +69,32 @@ public class Manager {
         }
     }
 
+    @Override
     public void createTask(Task task) {
-            task.setId(getNextTaskId());
-            tasks.put(task.getId(), task);
+        task.setId(getNextTaskId());
+        tasks.put(task.getId(), task);
     }
 
+    @Override
     public void createEpic(Epic epic) {
-            epic.setId(getNextTaskId());
-            epics.put(epic.getId(), epic);
+        epic.setId(getNextTaskId());
+        epics.put(epic.getId(), epic);
     }
 
+    @Override
     public void createSubTask(SubTask subTask) {
-            subTask.setId(getNextTaskId());
-            if (epics.containsKey(subTask.getEpicId())) {
-                Epic epic = epics.get(subTask.getEpicId());
-                epic.addSubtask(subTask);
-                subTasks.put(subTask.getId(), subTask);
-            } else {
-                System.out.printf("Невозможно создать подзадачу, так как эпик с id %s отсутствует\n",
-                    subTask.getEpicId());
-            }
+        subTask.setId(getNextTaskId());
+        if (epics.containsKey(subTask.getEpicId())) {
+            Epic epic = epics.get(subTask.getEpicId());
+            epic.addSubtask(subTask);
+            subTasks.put(subTask.getId(), subTask);
+        } else {
+            System.out.printf("Невозможно создать подзадачу, так как эпик с id %s отсутствует\n",
+                subTask.getEpicId());
+        }
     }
 
+    @Override
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
             tasks.put(task.getId(), task);
@@ -91,6 +103,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             epics.put(epic.getId(), epic);
@@ -99,6 +112,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void updateSubTask(SubTask subTask) {
         if (subTasks.containsKey(subTask.getId())) {
             subTasks.put(subTask.getId(), subTask);
@@ -108,6 +122,7 @@ public class Manager {
         }
     }
 
+    @Override
     public void removeTaskById(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
@@ -121,6 +136,7 @@ public class Manager {
         }
     }
 
+    @Override
     public ArrayList<SubTask> getSubTasksFromEpic(int epicId) {
         if (epics.containsKey(epicId)) {
             return epics.get(epicId).getSubTasks();

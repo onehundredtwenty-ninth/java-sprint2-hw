@@ -111,6 +111,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
+            ArrayList<SubTask> subtasks = epics.get(epic.getId()).getSubTasks();
+            epic.setSubTasks(subtasks);
             epics.put(epic.getId(), epic);
         } else {
             System.out.printf("Не удалось обновить эпик, так как эпик с id %s отсутствует\n", epic.getId());

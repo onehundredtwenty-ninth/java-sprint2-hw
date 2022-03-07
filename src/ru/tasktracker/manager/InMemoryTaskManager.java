@@ -2,6 +2,7 @@ package ru.tasktracker.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
@@ -13,6 +14,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     @Override
     public int getNextTaskId() {
@@ -58,10 +60,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int id) {
         if (tasks.containsKey(id)) {
+            historyManager.add(tasks.get(id));
             return tasks.get(id);
         } else if (epics.containsKey(id)) {
+            historyManager.add(epics.get(id));
             return epics.get(id);
         } else if (subTasks.containsKey(id)) {
+            historyManager.add(subTasks.get(id));
             return subTasks.get(id);
         } else {
             System.out.printf("Задача с id %s отсутствует в списке\n", id);
@@ -144,5 +149,10 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.printf("Эпик с id %s отсутствует в списке\n", epicId);
         }
         return null;
+    }
+
+    @Override
+    public List<Task> history() {
+        return historyManager.getHistory();
     }
 }

@@ -1,4 +1,5 @@
-import ru.tasktracker.manager.InMemoryTaskManager;
+import ru.tasktracker.manager.Managers;
+import ru.tasktracker.manager.TaskManager;
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
 import ru.tasktracker.tasks.Task;
@@ -6,17 +7,17 @@ import ru.tasktracker.tasks.TaskStatus;
 
 public class Main {
     public static void main(String[] args) {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         Task buyTask = new Task("Метнуться до круглосутки", "Взять пару пив", TaskStatus.NEW);
         Task keyTask = new Task("Сделать дубликат ключа", "От апартов и подъездный", TaskStatus.NEW);
-        inMemoryTaskManager.createTask(buyTask);
-        inMemoryTaskManager.createTask(keyTask);
+        taskManager.createTask(buyTask);
+        taskManager.createTask(keyTask);
 
         Epic workEpic = new Epic("Работка", "За денюжку");
         Epic relaxEpic = new Epic("Отдохнуть нормально", "Нормально!");
-        inMemoryTaskManager.createEpic(workEpic);
-        inMemoryTaskManager.createEpic(relaxEpic);
+        taskManager.createEpic(workEpic);
+        taskManager.createEpic(relaxEpic);
 
         SubTask pathToWorkSubTask = new SubTask("Доползти до офиса", "Желательно без опозданий",
              TaskStatus.NEW, workEpic.getId());
@@ -24,30 +25,30 @@ public class Main {
             TaskStatus.NEW, workEpic.getId());
         SubTask relaxSubTask = new SubTask("Глянуть сериальчик", "",
             TaskStatus.NEW, relaxEpic.getId());
-        inMemoryTaskManager.createSubTask(pathToWorkSubTask);
-        inMemoryTaskManager.createSubTask(didWorkSubTask);
-        inMemoryTaskManager.createSubTask(relaxSubTask);
+        taskManager.createSubTask(pathToWorkSubTask);
+        taskManager.createSubTask(didWorkSubTask);
+        taskManager.createSubTask(relaxSubTask);
 
-        System.out.println(inMemoryTaskManager.getAllEpics());
-        System.out.println(inMemoryTaskManager.getAllTasks());
-        System.out.println(inMemoryTaskManager.getAllSubTasks());
-        System.out.println(inMemoryTaskManager.getTaskById(relaxSubTask.getId()));
-        System.out.println(inMemoryTaskManager.getSubTasksFromEpic(workEpic.getId()));
+        System.out.println(taskManager.getTaskById(relaxSubTask.getId()));
+        System.out.println(taskManager.getSubTasksFromEpic(workEpic.getId()));
+        taskManager.getTaskById(keyTask.getId());
+        taskManager.getTaskById(buyTask.getId());
 
         pathToWorkSubTask.setStatus(TaskStatus.IN_PROGRESS);
         keyTask.setDescription("Только от аппартов");
         workEpic.setName("Любимая работка");
-        inMemoryTaskManager.updateSubTask(pathToWorkSubTask);
-        inMemoryTaskManager.updateTask(keyTask);
-        inMemoryTaskManager.updateEpic(workEpic);
-        System.out.println(inMemoryTaskManager.getAllEpics());
-        System.out.println(inMemoryTaskManager.getAllTasks());
-        System.out.println(inMemoryTaskManager.getAllSubTasks());
+        taskManager.updateSubTask(pathToWorkSubTask);
+        taskManager.updateTask(keyTask);
+        taskManager.updateEpic(workEpic);
 
-        inMemoryTaskManager.removeAllSubTasks();
-        inMemoryTaskManager.removeTaskById(relaxEpic.getId());
-        System.out.println(inMemoryTaskManager.getAllEpics());
-        inMemoryTaskManager.removeAllEpics();
-        inMemoryTaskManager.removeAllTasks();
+        System.out.println("History: " + taskManager.history());
+
+        taskManager.removeAllSubTasks();
+        taskManager.removeTaskById(relaxEpic.getId());
+        System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getAllSubTasks());
+        taskManager.removeAllEpics();
+        taskManager.removeAllTasks();
     }
 }

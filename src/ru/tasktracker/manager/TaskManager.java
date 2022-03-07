@@ -1,6 +1,7 @@
 package ru.tasktracker.manager;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
@@ -39,4 +40,6 @@ public interface TaskManager {
     void removeTaskById(int id);
 
     ArrayList<SubTask> getSubTasksFromEpic(int epicId);
+
+    List<Task> history();
 }

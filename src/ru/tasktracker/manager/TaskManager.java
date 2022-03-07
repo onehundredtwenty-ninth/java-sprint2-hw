@@ -9,8 +9,6 @@ import ru.tasktracker.tasks.Task;
 
 public interface TaskManager {
 
-    int getNextTaskId();
-
     Map<Integer, Epic> getAllEpics();
 
     Map<Integer, Task> getAllTasks();

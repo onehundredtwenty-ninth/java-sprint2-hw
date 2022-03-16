@@ -33,6 +33,11 @@ public class Main {
         System.out.println(taskManager.getSubTasksFromEpic(workEpic.getId()));
         taskManager.getTaskById(keyTask.getId());
         taskManager.getTaskById(buyTask.getId());
+        taskManager.getTaskById(buyTask.getId());
+        taskManager.getTaskById(buyTask.getId());
+        taskManager.getTaskById(workEpic.getId());
+        taskManager.getTaskById(workEpic.getId());
+        taskManager.getTaskById(relaxEpic.getId());
 
         pathToWorkSubTask.setStatus(TaskStatus.IN_PROGRESS);
         keyTask.setDescription("Только от аппартов");
@@ -43,11 +48,13 @@ public class Main {
 
         System.out.println("History: " + taskManager.history());
 
-        taskManager.removeAllSubTasks();
-        taskManager.removeTaskById(relaxEpic.getId());
+        taskManager.removeTaskById(buyTask.getId());
+        taskManager.removeTaskById(workEpic.getId());
+        System.out.println("History: " + taskManager.history());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubTasks());
+        taskManager.removeAllSubTasks();
         taskManager.removeAllEpics();
         taskManager.removeAllTasks();
     }

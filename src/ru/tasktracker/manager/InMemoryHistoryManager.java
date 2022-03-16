@@ -2,30 +2,34 @@ package ru.tasktracker.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import ru.tasktracker.tasks.Task;
 import ru.tasktracker.node.Node;
+import ru.tasktracker.tasks.Task;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final List<Task> viewedTasks = new LinkedList<>();
+    private final TasksLinkedList viewedTasks = new TasksLinkedList();
     private static final int HISTORY_LENGTH = 10;
     private final Map<Integer, Node<Task>> nodesMap = new HashMap<>();
 
     @Override
     public void add(Task task) {
-        if (viewedTasks.size() == HISTORY_LENGTH) {
-            viewedTasks.remove(0);
+        if (viewedTasks.size() == HISTORY_LENGTH && !nodesMap.containsKey(task.getId())) {
+            viewedTasks.removeFirst();
+            viewedTasks.linkLast(task);
         }
-        viewedTasks.add(task);
+
+        if (nodesMap.containsKey(task.getId())) {
+            viewedTasks.remove(task);
+        }
+        viewedTasks.linkLast(task);
     }
 
     @Override
     public List<Task> getHistory() {
-        return viewedTasks;
+        return viewedTasks.getTasks();
     }
 
     @Override
@@ -61,10 +65,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
 
         public void remove(Task task) {
-            if (nodesMap.containsKey(task.getId())) {
-                removeNode(nodesMap.get(task.getId()));
-                nodesMap.remove(task.getId());
-            }
+            removeNode(nodesMap.get(task.getId()));
         }
 
         public void removeFirst() {
@@ -78,6 +79,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         public void removeNode(Node<Task> x) {
             final Node<Task> next = x.next;
             final Node<Task> prev = x.prev;
+            nodesMap.remove(x.item.getId());
 
             if (prev == null) {
                 head = next;

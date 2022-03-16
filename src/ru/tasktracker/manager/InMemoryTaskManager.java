@@ -132,11 +132,17 @@ public class InMemoryTaskManager implements TaskManager {
     public void removeTaskById(int id) {
         if (tasks.containsKey(id)) {
             tasks.remove(id);
+            historyManager.remove(id);
         } else if (epics.containsKey(id)) {
+            for (SubTask subTask : epics.get(id).getSubTasks()) {
+                historyManager.remove(subTask.getId());
+            }
             epics.remove(id);
+            historyManager.remove(id);
         } else if (subTasks.containsKey(id)) {
             epics.get(subTasks.get(id).getEpicId()).removeSubTask(id);
             subTasks.remove(id);
+            historyManager.remove(id);
         } else {
             System.out.printf("Не удалось удалить задачу, так как задача с id %s отсутствует\n", id);
         }

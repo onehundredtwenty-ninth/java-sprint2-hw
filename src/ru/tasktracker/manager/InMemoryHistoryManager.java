@@ -34,7 +34,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-
+        if (nodesMap.containsKey(id)) {
+            viewedTasks.removeNode(nodesMap.get(id));
+        }
     }
 
     class TasksLinkedList {

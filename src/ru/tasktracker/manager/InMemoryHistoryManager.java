@@ -4,26 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import ru.tasktracker.node.Node;
 import ru.tasktracker.tasks.Task;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
     private final TasksLinkedList viewedTasks = new TasksLinkedList();
-    private static final int HISTORY_LENGTH = 10;
-    private final Map<Integer, Node<Task>> nodesMap = new HashMap<>();
 
     @Override
     public void add(Task task) {
-        if (viewedTasks.size() == HISTORY_LENGTH && !nodesMap.containsKey(task.getId())) {
-            viewedTasks.removeFirst();
-            viewedTasks.linkLast(task);
-        }
-
-        if (nodesMap.containsKey(task.getId())) {
-            viewedTasks.remove(task);
-        }
         viewedTasks.linkLast(task);
     }
 
@@ -34,27 +23,28 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        if (nodesMap.containsKey(id)) {
-            viewedTasks.removeNode(nodesMap.get(id));
-        }
+        viewedTasks.removeNode(id);
     }
 
     class TasksLinkedList {
 
         public Node<Task> head;
         public Node<Task> tail;
-        private int size;
+        private final Map<Integer, Node<Task>> nodesMap = new HashMap<>();
 
         public void linkLast(Task task) {
-            final Node<Task> l = tail;
-            final Node<Task> newNode = new Node<>(l, task, null);
+            if (nodesMap.containsKey(task.getId())) {
+                viewedTasks.removeNode(nodesMap.get(task.getId()));
+            }
+
+            final Node<Task> oldTail = tail;
+            final Node<Task> newNode = new Node<>(oldTail, task, null);
             tail = newNode;
-            if (l == null) {
+            if (oldTail == null) {
                 head = newNode;
             } else {
-                l.next = newNode;
+                oldTail.next = newNode;
             }
-            size++;
             nodesMap.put(task.getId(), tail);
         }
 
@@ -66,43 +56,32 @@ public class InMemoryHistoryManager implements HistoryManager {
             return result;
         }
 
-        public void remove(Task task) {
-            removeNode(nodesMap.get(task.getId()));
-        }
-
-        public void removeFirst() {
-            final Node<Task> f = head;
-            if (f == null) {
-                throw new NoSuchElementException();
-            }
-            removeNode(f);
-        }
-
-        public void removeNode(Node<Task> x) {
-            final Node<Task> next = x.next;
-            final Node<Task> prev = x.prev;
-            nodesMap.remove(x.item.getId());
+        public void removeNode(Node<Task> nodeForRemove) {
+            final Node<Task> next = nodeForRemove.next;
+            final Node<Task> prev = nodeForRemove.prev;
+            nodesMap.remove(nodeForRemove.item.getId());
 
             if (prev == null) {
                 head = next;
             } else {
                 prev.next = next;
-                x.prev = null;
+                nodeForRemove.prev = null;
             }
 
             if (next == null) {
                 tail = prev;
             } else {
                 next.prev = prev;
-                x.next = null;
+                nodeForRemove.next = null;
             }
 
-            x.item = null;
-            size--;
+            nodeForRemove.item = null;
         }
 
-        public int size() {
-            return size;
+        public void removeNode(int id) {
+            if (nodesMap.containsKey(id)) {
+                removeNode(nodesMap.get(id));
+            }
         }
     }
 

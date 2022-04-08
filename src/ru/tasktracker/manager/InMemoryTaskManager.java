@@ -21,16 +21,6 @@ public class InMemoryTaskManager implements TaskManager {
         return tasksCounter;
     }
 
-    public InMemoryTaskManager() {}
-
-    public InMemoryTaskManager(Map<Integer, Epic> epics, Map<Integer, Task> tasks, Map<Integer, SubTask> subTasks,
-        HistoryManager historyManager) {
-        this.epics = epics;
-        this.tasks = tasks;
-        this.subTasks = subTasks;
-        this.historyManager = historyManager;
-    }
-
     @Override
     public Map<Integer, Epic> getAllEpics() {
         return epics;

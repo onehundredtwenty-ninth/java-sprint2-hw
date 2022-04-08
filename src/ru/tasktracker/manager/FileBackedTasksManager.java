@@ -94,7 +94,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-    public void save() {
+    private void save() {
         List<String> tasksAsCsv = new ArrayList<>();
         tasksAsCsv.addAll(getListCsvOfTasks(tasks));
         tasksAsCsv.addAll(getListCsvOfTasks(epics));

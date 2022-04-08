@@ -150,6 +150,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
         }
 
+        for (SubTask subTask : fileBackedTasksManager.getAllSubTasks().values()) {
+            fileBackedTasksManager.epics.get(subTask.getEpicId()).addSubtask(subTask);
+        }
+
         List<Integer> ids = getHistoryManagerFromString(tasksAsString[tasksAsString.length - 1]);
 
         for (Integer id : ids) {

@@ -63,6 +63,10 @@ public class FiledBackedManagerTest {
             throw new AssertionError("Список сабтасок выгруженный из файла не совпадает со списком сабтасок в памяти");
         }
 
+        if (!loadedTaskManager.getAllEpics().toString().equals(initialTaskManager.getAllEpics().toString())) {
+            throw new AssertionError("Список эпиков выгруженный из файла не совпадает со списком эпиков в памяти");
+        }
+
         System.out.println("Epics loaded from file: " + loadedTaskManager.getAllEpics());
         System.out.println("Tasks loaded from file: " + loadedTaskManager.getAllTasks());
         System.out.println("Subtasks loaded from file: " + loadedTaskManager.getAllSubTasks());

@@ -27,4 +27,9 @@ public class SubTask extends Task {
             ", status=" + status +
             '}';
     }
+
+    @Override
+    public String toCsvString() {
+        return super.toCsvString() + "," + epicId;
+    }
 }

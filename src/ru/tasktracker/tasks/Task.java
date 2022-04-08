@@ -59,4 +59,10 @@ public class Task {
             ", status=" + status +
             '}';
     }
+
+    public String toCsvString() {
+        String taskType = this.getClass().getName()
+            .substring(this.getClass().getName().lastIndexOf(".") + 1);
+        return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description);
+    }
 }

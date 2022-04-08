@@ -11,14 +11,24 @@ import ru.tasktracker.tasks.Task;
 public class InMemoryTaskManager implements TaskManager {
 
     protected static int tasksCounter = 0;
-    protected final Map<Integer, Epic> epics = new HashMap<>();
-    protected final Map<Integer, Task> tasks = new HashMap<>();
-    protected final Map<Integer, SubTask> subTasks = new HashMap<>();
-    protected final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected Map<Integer, Epic> epics = new HashMap<>();
+    protected Map<Integer, Task> tasks = new HashMap<>();
+    protected Map<Integer, SubTask> subTasks = new HashMap<>();
+    protected HistoryManager historyManager = Managers.getDefaultHistory();
 
     public int getNextTaskId() {
         tasksCounter++;
         return tasksCounter;
+    }
+
+    public InMemoryTaskManager() {}
+
+    public InMemoryTaskManager(Map<Integer, Epic> epics, Map<Integer, Task> tasks, Map<Integer, SubTask> subTasks,
+        HistoryManager historyManager) {
+        this.epics = epics;
+        this.tasks = tasks;
+        this.subTasks = subTasks;
+        this.historyManager = historyManager;
     }
 
     @Override

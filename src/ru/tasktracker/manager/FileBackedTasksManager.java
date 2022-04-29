@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import ru.tasktracker.exception.ManagerSaveException;
@@ -154,7 +155,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileBackedTasksManager.epics.get(subTask.getEpicId()).addSubtask(subTask);
         }
 
-        List<Integer> ids = getHistoryManagerFromString(tasksAsString[tasksAsString.length - 1]);
+        List<Integer> ids;
+
+        if (!tasksAsString[tasksAsString.length - 2].isBlank()){
+            ids = Collections.emptyList();
+        } else {
+            ids = getHistoryManagerFromString(tasksAsString[tasksAsString.length - 1]);
+        }
 
         for (Integer id : ids) {
             if (fileBackedTasksManager.tasks.containsKey(id)) {
@@ -190,6 +197,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private static List<Integer> getHistoryManagerFromString(String value) {
+        if (value.isBlank()) {
+            return Collections.emptyList();
+        }
         String[] idsArray = value.split(",");
         List<Integer> ids = new ArrayList<>();
         for (String idAsString : idsArray) {

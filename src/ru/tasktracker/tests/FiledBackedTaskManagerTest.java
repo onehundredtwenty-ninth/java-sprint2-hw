@@ -1,14 +1,13 @@
 package ru.tasktracker.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.nio.file.Paths;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.tasktracker.manager.FileBackedTasksManager;
 import ru.tasktracker.manager.TaskManager;
 import ru.tasktracker.tasks.Epic;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FiledBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 

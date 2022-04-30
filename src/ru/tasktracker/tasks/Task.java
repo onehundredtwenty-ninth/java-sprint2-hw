@@ -100,12 +100,20 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
+                ", duration=" + duration +
+                ", startTime=" + startTime +
                 '}';
     }
 
     public String toCsvString() {
         String taskType = this.getClass().getName()
                 .substring(this.getClass().getName().lastIndexOf(".") + 1);
-        return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description);
+        if (startTime != null && duration != null) {
+            return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description,
+                    startTime.format(dateTimeFormatter), String.valueOf(duration.toHours()));
+        } else {
+            return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description,
+                    " ", " ");
+        }
     }
 }

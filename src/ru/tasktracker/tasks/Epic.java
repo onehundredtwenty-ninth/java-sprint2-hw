@@ -1,5 +1,6 @@
 package ru.tasktracker.tasks;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class Epic extends Task {
         setEpicStatus();
         setStartTime();
         setEndTime();
+        setDuration();
     }
 
     public Epic(int id, String name, TaskStatus status, String description) {
@@ -30,6 +32,7 @@ public class Epic extends Task {
         setEpicStatus();
         setStartTime();
         setEndTime();
+        setDuration();
     }
 
     public void addSubtask(SubTask subTask) {
@@ -37,6 +40,7 @@ public class Epic extends Task {
         setEpicStatus();
         setStartTime();
         setEndTime();
+        setDuration();
     }
 
     public void removeSubtasks() {
@@ -44,6 +48,7 @@ public class Epic extends Task {
         setEpicStatus();
         setStartTime();
         setEndTime();
+        setDuration();
     }
 
     public void removeSubTask(int subTaskId) {
@@ -68,12 +73,15 @@ public class Epic extends Task {
         }
     }
 
-    @Override
-    public long getDuration() {
-        for (SubTask subTask : subTasks) {
-            duration = duration.plusHours(subTask.getDuration());
+    public void setDuration() {
+        if (duration == null) {
+            duration = Duration.ZERO;
         }
-        return duration.toHours();
+        for (SubTask subTask : subTasks) {
+            if (subTask.duration != null) {
+                duration = duration.plusHours(subTask.getDuration());
+            }
+        }
     }
 
     public void setEndTime() {
@@ -110,12 +118,32 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
+        List<Integer> subtasksIds = new ArrayList<>();
+        for (SubTask subTask : subTasks) {
+            subtasksIds.add(subTask.getId());
+        }
         return "Epic{" +
-                "subTasks=" + subTasks +
+                "subTasks=" + subtasksIds +
+                ", endTime=" + endTime +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
+                ", duration=" + duration.toHours() +
+                ", startTime=" + startTime +
                 '}';
+    }
+
+    @Override
+    public String toCsvString() {
+        String taskType = this.getClass().getName()
+                .substring(this.getClass().getName().lastIndexOf(".") + 1);
+        if (startTime != null) {
+            return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description,
+                    getStartTime().format(dateTimeFormatter), String.valueOf(getDuration()));
+        } else {
+            return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description,
+                    " ", " ");
+        }
     }
 }

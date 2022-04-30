@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import ru.tasktracker.exception.ManagerSaveException;
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
@@ -94,7 +95,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         tasksAsCsv.addAll(getListCsvOfTasks(epics));
         tasksAsCsv.addAll(getListCsvOfTasks(subTasks));
 
-        tasksAsCsv.add(0, "id,type,name,status,description,epic");
+        tasksAsCsv.add(0, "id,type,name,status,description,startTime,duration,epic");
         StringBuilder lastElement = new StringBuilder(tasksAsCsv.get(tasksAsCsv.size() - 1));
         lastElement.deleteCharAt(lastElement.length() - 1);
         tasksAsCsv.set(tasksAsCsv.size() - 1, lastElement.toString());
@@ -157,7 +158,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         List<Integer> ids;
 
-        if (!tasksAsString[tasksAsString.length - 2].isBlank()){
+        if (!tasksAsString[tasksAsString.length - 2].isBlank()) {
             ids = Collections.emptyList();
         } else {
             ids = getHistoryManagerFromString(tasksAsString[tasksAsString.length - 1]);
@@ -180,17 +181,29 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] taskAttributes = task.split(",");
         switch (taskAttributes[1]) {
             case ("Task"):
-                return new Task(Integer.parseInt(taskAttributes[0]), taskAttributes[2],
-                    TaskStatus.valueOf(taskAttributes[3]),
-                    taskAttributes[4]);
+                if (!taskAttributes[5].isBlank()) {
+                    return new Task(Integer.parseInt(taskAttributes[0]), taskAttributes[2],
+                            TaskStatus.valueOf(taskAttributes[3]),
+                            taskAttributes[4], Long.parseLong(taskAttributes[6]), taskAttributes[5]);
+                } else {
+                    return new Task(Integer.parseInt(taskAttributes[0]), taskAttributes[2],
+                            TaskStatus.valueOf(taskAttributes[3]),
+                            taskAttributes[4]);
+                }
             case ("Epic"):
                 return new Epic(Integer.parseInt(taskAttributes[0]), taskAttributes[2],
-                    TaskStatus.valueOf(taskAttributes[3]),
-                    taskAttributes[4]);
+                        TaskStatus.valueOf(taskAttributes[3]),
+                        taskAttributes[4]);
             case ("SubTask"):
+                if (!taskAttributes[5].isBlank()) {
+                    return new SubTask(Integer.parseInt(taskAttributes[0]), taskAttributes[2],
+                            TaskStatus.valueOf(taskAttributes[3]),
+                            taskAttributes[4], Integer.parseInt(taskAttributes[7]), Long.parseLong(taskAttributes[6]),
+                            taskAttributes[5]);
+                }
                 return new SubTask(Integer.parseInt(taskAttributes[0]), taskAttributes[2],
-                    TaskStatus.valueOf(taskAttributes[3]),
-                    taskAttributes[4], Integer.parseInt(taskAttributes[5]));
+                        TaskStatus.valueOf(taskAttributes[3]),
+                        taskAttributes[4], Integer.parseInt(taskAttributes[7]));
             default:
                 throw new IllegalArgumentException("Задача имеет некорректный тип: " + taskAttributes[1]);
         }

@@ -90,7 +90,11 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plusHours(duration.toHours());
+        if (startTime != null && duration != null) {
+            return startTime.plusHours(duration.toHours());
+        } else {
+            return null;
+        }
     }
 
     @Override

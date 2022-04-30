@@ -78,9 +78,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createTask(Task task) {
-        task.setId(getNextTaskId());
-        tasks.put(task.getId(), task);
-        prioritizedTasks.add(task);
+        if (!hasIntersections(task)) {
+            task.setId(getNextTaskId());
+            tasks.put(task.getId(), task);
+            prioritizedTasks.add(task);
+        } else {
+            System.out.println("Время выполнения создаваемой задачи пересекается с временем выполнения существующей задачи");
+        }
+
     }
 
     @Override
@@ -91,23 +96,32 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createSubTask(SubTask subTask) {
-        subTask.setId(getNextTaskId());
-        if (epics.containsKey(subTask.getEpicId())) {
-            Epic epic = epics.get(subTask.getEpicId());
-            epic.addSubtask(subTask);
-            subTasks.put(subTask.getId(), subTask);
-            prioritizedTasks.add(subTask);
+        if (!hasIntersections(subTask)) {
+            subTask.setId(getNextTaskId());
+            if (epics.containsKey(subTask.getEpicId())) {
+                Epic epic = epics.get(subTask.getEpicId());
+                epic.addSubtask(subTask);
+                subTasks.put(subTask.getId(), subTask);
+                prioritizedTasks.add(subTask);
+            } else {
+                System.out.printf("Невозможно создать подзадачу, так как эпик с id %s отсутствует\n",
+                        subTask.getEpicId());
+            }
         } else {
-            System.out.printf("Невозможно создать подзадачу, так как эпик с id %s отсутствует\n",
-                subTask.getEpicId());
+            System.out.println("Время выполнения создаваемой задачи пересекается с временем выполнения существующей задачи");
         }
+
     }
 
     @Override
     public void updateTask(Task task) {
         if (tasks.containsKey(task.getId())) {
-            tasks.put(task.getId(), task);
-            prioritizedTasks.add(task);
+            if (!hasIntersections(task)) {
+                tasks.put(task.getId(), task);
+                prioritizedTasks.add(task);
+            } else {
+                System.out.println("Время выполнения создаваемой задачи пересекается с временем выполнения существующей задачи");
+            }
         } else {
             System.out.printf("Не удалось обновить задачу, так как задача с id %s отсутствует\n", task.getId());
         }
@@ -127,9 +141,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubTask(SubTask subTask) {
         if (subTasks.containsKey(subTask.getId())) {
-            subTasks.put(subTask.getId(), subTask);
-            prioritizedTasks.add(subTask);
-            epics.get(subTask.getEpicId()).updateSubTask(subTask);
+            if (!hasIntersections(subTask)) {
+                subTasks.put(subTask.getId(), subTask);
+                prioritizedTasks.add(subTask);
+                epics.get(subTask.getEpicId()).updateSubTask(subTask);
+            } else {
+                System.out.println("Время выполнения создаваемой задачи пересекается с временем выполнения существующей задачи");
+            }
         } else {
             System.out.printf("Не удалось обновить эпик, так как эпик с id %s отсутствует\n", subTask.getId());
         }
@@ -161,9 +179,11 @@ public class InMemoryTaskManager implements TaskManager {
 
     protected boolean hasIntersections(Task newTask) {
         for (Task task : prioritizedTasks) {
-            if (newTask.getStartTime().isBefore(task.getEndTime())
-                    || newTask.getEndTime().isAfter(task.getStartTime())) {
-                return true;
+            if (newTask.getStartTime() != null && task.getStartTime() != null) {
+                if (newTask.getStartTime().isBefore(task.getEndTime())
+                        && newTask.getEndTime().isAfter(task.getStartTime())) {
+                    return true;
+                }
             }
         }
         return false;

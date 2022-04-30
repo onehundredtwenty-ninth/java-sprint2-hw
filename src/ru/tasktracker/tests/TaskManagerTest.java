@@ -282,14 +282,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask didWorkSubTask = new SubTask("Создать видимость работы", "Желательно правдоподобно",
                 TaskStatus.NEW, workEpic.getId(), 9L, "19.05.2022 16:59");
         SubTask relaxSubTask = new SubTask("Глянуть сериальчик", "Интересный",
-                TaskStatus.NEW, relaxEpic.getId(), 18L, "28.05.2022 16:59");
+                TaskStatus.NEW, relaxEpic.getId(), 8L, "28.05.2022 16:59");
+        SubTask relaxAndChillSubTask = new SubTask("Глянуть сериальчик да", "Интересный",
+                TaskStatus.NEW, relaxEpic.getId(), 8L, "28.05.2022 19:59");
         taskManager.createSubTask(pathToWorkSubTask);
         taskManager.createSubTask(didWorkSubTask);
         taskManager.createSubTask(relaxSubTask);
+        taskManager.createSubTask(relaxAndChillSubTask);
         Task buyTask = new Task("Метнуться до круглосутки", "Взять пару пив", TaskStatus.NEW, 18L,
-                "28.05.2022 16:59");
+                "30.07.2022 16:59");
         Task keyTask = new Task("Сделать дубликат ключа", "От апартов и подъездный", TaskStatus.NEW, 18L,
-                "28.05.2022 16:59");
+                "30.06.2022 16:59");
         taskManager.createTask(buyTask);
         taskManager.createTask(keyTask);
 

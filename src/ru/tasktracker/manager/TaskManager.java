@@ -3,6 +3,8 @@ package ru.tasktracker.manager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
 import ru.tasktracker.tasks.Task;
@@ -40,4 +42,6 @@ public interface TaskManager {
     ArrayList<SubTask> getSubTasksFromEpic(int epicId);
 
     List<Task> history();
+
+    Set<Task> getPrioritizedTasks();
 }

@@ -10,6 +10,8 @@ import ru.tasktracker.tasks.SubTask;
 import ru.tasktracker.tasks.Task;
 import ru.tasktracker.tasks.TaskStatus;
 
+import java.util.Set;
+
 public abstract class TaskManagerTest<T extends TaskManager> {
 
     public T taskManager;
@@ -267,6 +269,35 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         taskManager.createSubTask(relaxSubTask);
 
         assertEquals(2, taskManager.getSubTasksFromEpic(workEpic.getId()).size());
+    }
+
+    @Test
+    public void shouldGetSortByTaskPriority() {
+        Epic workEpic = new Epic("Работка", "За денюжку");
+        Epic relaxEpic = new Epic("Отдохнуть нормально", "Нормально!");
+        taskManager.createEpic(workEpic);
+        taskManager.createEpic(relaxEpic);
+        SubTask pathToWorkSubTask = new SubTask("Доползти до офиса", "Желательно без опозданий",
+                TaskStatus.NEW, workEpic.getId(), 7L, "17.05.2022 16:59");
+        SubTask didWorkSubTask = new SubTask("Создать видимость работы", "Желательно правдоподобно",
+                TaskStatus.NEW, workEpic.getId(), 9L, "19.05.2022 16:59");
+        SubTask relaxSubTask = new SubTask("Глянуть сериальчик", "Интересный",
+                TaskStatus.NEW, relaxEpic.getId(), 18L, "28.05.2022 16:59");
+        taskManager.createSubTask(pathToWorkSubTask);
+        taskManager.createSubTask(didWorkSubTask);
+        taskManager.createSubTask(relaxSubTask);
+        Task buyTask = new Task("Метнуться до круглосутки", "Взять пару пив", TaskStatus.NEW, 18L,
+                "28.05.2022 16:59");
+        Task keyTask = new Task("Сделать дубликат ключа", "От апартов и подъездный", TaskStatus.NEW, 18L,
+                "28.05.2022 16:59");
+        taskManager.createTask(buyTask);
+        taskManager.createTask(keyTask);
+
+        taskManager.getTaskById(workEpic.getId());
+        taskManager.getTaskById(relaxEpic.getId());
+
+        Set<Task> priorityTasks = taskManager.getPrioritizedTasks();
+        priorityTasks.forEach(System.out::println);
     }
 
 }

@@ -72,15 +72,6 @@ public class FiledBackedTaskManagerTest extends TaskManagerTest<FileBackedTasksM
         TaskManager loadedTaskManager = FileBackedTasksManager.loadFromFile(
                 Paths.get("src/ru/tasktracker/storagefiles/StorageFile.txt"));
 
-        System.out.println(taskManager.getTaskById(workEpic.getId()));
-        System.out.println(loadedTaskManager.getTaskById(workEpic.getId()));
-
-        System.out.println(taskManager.getTaskById(pathToWorkSubTask.getId()));
-        System.out.println(loadedTaskManager.getTaskById(pathToWorkSubTask.getId()));
-
-        System.out.println(taskManager.getTaskById(buyTask.getId()));
-        System.out.println(loadedTaskManager.getTaskById(buyTask.getId()));
-
         assertEquals(2, loadedTaskManager.getAllEpics().size());
     }
 

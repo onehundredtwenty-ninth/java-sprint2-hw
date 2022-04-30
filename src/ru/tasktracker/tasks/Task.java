@@ -1,11 +1,26 @@
 package ru.tasktracker.tasks;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Task {
 
     protected String name;
     protected String description;
     protected int id;
     protected TaskStatus status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
+    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
+    public Task(String name, String description, TaskStatus status, long duration, String startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = Duration.ofHours(duration);
+        this.startTime = LocalDateTime.parse(startTime, dateTimeFormatter);
+    }
 
     public Task(String name, String description, TaskStatus status) {
         this.name = name;
@@ -23,6 +38,15 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
+    }
+
+    public Task(int id, String name, TaskStatus status, String description, long duration, String startTime) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = Duration.ofHours(duration);
+        this.startTime = LocalDateTime.parse(startTime, dateTimeFormatter);
     }
 
     public String getName() {
@@ -57,19 +81,31 @@ public class Task {
         this.status = status;
     }
 
+    public long getDuration() {
+        return duration.toHours();
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plusHours(duration.toHours());
+    }
+
     @Override
     public String toString() {
         return "Task{" +
-            "name='" + name + '\'' +
-            ", description='" + description + '\'' +
-            ", id=" + id +
-            ", status=" + status +
-            '}';
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
     }
 
     public String toCsvString() {
         String taskType = this.getClass().getName()
-            .substring(this.getClass().getName().lastIndexOf(".") + 1);
+                .substring(this.getClass().getName().lastIndexOf(".") + 1);
         return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description);
     }
 }

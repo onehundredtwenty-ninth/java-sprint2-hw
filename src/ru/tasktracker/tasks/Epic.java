@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class Epic extends Task {
@@ -13,6 +14,15 @@ public class Epic extends Task {
 
     public Epic(String name, String description) {
         super(name, description);
+        setEpicStatus();
+        setStartTime();
+        setEndTime();
+        setDuration();
+    }
+
+    public Epic(int id, String name, String description) {
+        super(name, description);
+        setId(id);
         setEpicStatus();
         setStartTime();
         setEndTime();
@@ -145,5 +155,19 @@ public class Epic extends Task {
             return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description,
                     " ", " ");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subTasks, epic.subTasks) && Objects.equals(endTime, epic.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subTasks, endTime);
     }
 }

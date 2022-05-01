@@ -3,6 +3,7 @@ package ru.tasktracker.tasks;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Task {
 
@@ -119,5 +120,24 @@ public class Task {
             return String.join(",", String.valueOf(id), taskType, name, String.valueOf(status), description,
                     " ", " ");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id
+                && Objects.equals(name, task.name)
+                && Objects.equals(description, task.description)
+                && status == task.status
+                && Objects.equals(duration, task.duration)
+                && Objects.equals(startTime, task.startTime)
+                && Objects.equals(dateTimeFormatter, task.dateTimeFormatter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, id, status, duration, startTime, dateTimeFormatter);
     }
 }

@@ -1,35 +1,36 @@
 package ru.tasktracker.tests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.tasktracker.manager.InMemoryTaskManager;
+import ru.tasktracker.manager.HistoryManager;
+import ru.tasktracker.manager.InMemoryHistoryManager;
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
 import ru.tasktracker.tasks.Task;
 import ru.tasktracker.tasks.TaskStatus;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class HistoryManagerTest {
 
-    private InMemoryTaskManager taskManager;
+    private HistoryManager historyManager;
 
     @BeforeEach
     public void createTaskManager() {
-        taskManager = new InMemoryTaskManager();
+        historyManager = new InMemoryHistoryManager();
     }
 
     @Test
     public void shouldReturnEmptyHistory() {
-        assertEquals(0, taskManager.history().size());
+        assertEquals(0, historyManager.getHistory().size());
     }
 
     @Test
     public void shouldReturnHistoryWithoutDuplicatesTest() {
         Epic workEpic = new Epic("Работка", "За денюжку");
         Epic relaxEpic = new Epic("Отдохнуть нормально", "Нормально!");
-        taskManager.createEpic(workEpic);
-        taskManager.createEpic(relaxEpic);
+        historyManager.add(workEpic);
+        historyManager.add(relaxEpic);
 
         SubTask pathToWorkSubTask = new SubTask("Доползти до офиса", "Желательно без опозданий",
                 TaskStatus.NEW, workEpic.getId());
@@ -37,15 +38,11 @@ public class HistoryManagerTest {
                 TaskStatus.NEW, workEpic.getId());
         SubTask relaxSubTask = new SubTask("Глянуть сериальчик", "Интересный",
                 TaskStatus.NEW, relaxEpic.getId());
-        taskManager.createSubTask(pathToWorkSubTask);
-        taskManager.createSubTask(didWorkSubTask);
-        taskManager.createSubTask(relaxSubTask);
+        historyManager.add(pathToWorkSubTask);
+        historyManager.add(didWorkSubTask);
+        historyManager.add(relaxSubTask);
 
-        taskManager.getTaskById(workEpic.getId());
-        taskManager.getTaskById(workEpic.getId());
-        taskManager.getTaskById(relaxEpic.getId());
-
-        assertEquals(2, taskManager.history().size());
+        assertEquals(2, historyManager.getHistory().size());
     }
 
     @Test
@@ -56,25 +53,19 @@ public class HistoryManagerTest {
         Task jobTask = new Task("jobTask", "jobTask desc", TaskStatus.NEW);
         Task enoughTask = new Task("enoughTask", "enoughTask desc", TaskStatus.NEW);
         Task finalTask = new Task("finalTask", "finalTask desc", TaskStatus.NEW);
-        taskManager.createTask(buyTask);
-        taskManager.createTask(keyTask);
-        taskManager.createTask(workTask);
-        taskManager.createTask(jobTask);
-        taskManager.createTask(enoughTask);
-        taskManager.createTask(finalTask);
+        historyManager.add(buyTask);
+        historyManager.add(keyTask);
+        historyManager.add(workTask);
+        historyManager.add(jobTask);
+        historyManager.add(enoughTask);
+        historyManager.add(finalTask);
 
-        taskManager.getTaskById(buyTask.getId());
-        taskManager.getTaskById(keyTask.getId());
-        taskManager.getTaskById(workTask.getId());
-        taskManager.getTaskById(jobTask.getId());
-        taskManager.getTaskById(enoughTask.getId());
-        taskManager.getTaskById(finalTask.getId());
+        historyManager.remove(buyTask.getId());
+        historyManager.remove(workTask.getId());
+        historyManager.remove(finalTask.getId());
 
-        taskManager.removeTaskById(buyTask.getId());
-        taskManager.removeTaskById(workTask.getId());
-        taskManager.removeTaskById(finalTask.getId());
-
-        assertEquals(3, taskManager.history().size());
+        assertEquals(3, historyManager.getHistory().size());
     }
+
 
 }

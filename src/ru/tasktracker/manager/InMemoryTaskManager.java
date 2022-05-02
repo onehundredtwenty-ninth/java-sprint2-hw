@@ -1,11 +1,10 @@
 package ru.tasktracker.manager;
 
-import java.util.*;
-
-import ru.tasktracker.comparators.TaskPriorityComparator;
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
 import ru.tasktracker.tasks.Task;
+
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -14,7 +13,15 @@ public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Task> tasks = new HashMap<>();
     protected Map<Integer, SubTask> subTasks = new HashMap<>();
     protected HistoryManager historyManager = Managers.getDefaultHistory();
-    protected Set<Task> prioritizedTasks = new TreeSet<>(new TaskPriorityComparator());
+    protected Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
+        if (o1.getStartTime() == null) {
+            return -1;
+        } else if (o2.getStartTime() == null) {
+            return 1;
+        } else {
+            return o1.getStartTime().compareTo(o2.getStartTime());
+        }
+    });
 
     public int getNextTaskId() {
         tasksCounter++;

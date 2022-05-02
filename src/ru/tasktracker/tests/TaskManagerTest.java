@@ -243,6 +243,41 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
+    public void shouldRemoveEpicByIdTest() {
+        Epic workEpic = new Epic("Работка", "За денюжку");
+        Epic relaxEpic = new Epic("Отдохнуть нормально", "Нормально!");
+        taskManager.createEpic(workEpic);
+        taskManager.createEpic(relaxEpic);
+        taskManager.removeTaskById(workEpic.getId());
+
+        Task actualTask = taskManager.getTaskById(workEpic.getId());
+
+        assertNull(actualTask);
+    }
+
+    @Test
+    public void shouldRemoveSubTaskByIdTest() {
+        Epic workEpic = new Epic("Работка", "За денюжку");
+        taskManager.createEpic(workEpic);
+
+        SubTask pathToWorkSubTask = new SubTask("Доползти до офиса", "Желательно без опозданий",
+                TaskStatus.NEW, workEpic.getId());
+        taskManager.createSubTask(pathToWorkSubTask);
+        taskManager.removeTaskById(pathToWorkSubTask.getId());
+
+        Task actualTask = taskManager.getTaskById(pathToWorkSubTask.getId());
+
+        assertNull(actualTask);
+    }
+
+    @Test
+    public void shouldNotRemoveTaskByIncorrectIdTest() {
+        taskManager.removeTaskById(436);
+        Task actualTask = taskManager.getTaskById(436);
+        assertNull(actualTask);
+    }
+
+    @Test
     public void shouldReturnAllEpicSubtasksTest() {
         Epic workEpic = new Epic("Работка", "За денюжку");
         Epic relaxEpic = new Epic("Отдохнуть нормально", "Нормально!");
@@ -295,6 +330,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manuallyPrioritizedTasks.add(buyTask);
 
         Task[] priorityTasksArray = taskManager.getPrioritizedTasks().toArray(Task[]::new);
+
+        for (int i = 0; i < manuallyPrioritizedTasks.size(); i++) {
+            assertEquals(manuallyPrioritizedTasks.get(i), priorityTasksArray[i]);
+        }
+
+        Task updatedBuyTask = new Task(buyTask.getId(), "Метнуться до круглосутки", TaskStatus.NEW,
+                "Взять пару-тройку пив", 18L, "16.05.2022 16:59");
+        taskManager.updateTask(updatedBuyTask);
+        priorityTasksArray = taskManager.getPrioritizedTasks().toArray(Task[]::new);
+        manuallyPrioritizedTasks.remove(4);
+        manuallyPrioritizedTasks.add(0, updatedBuyTask);
 
         for (int i = 0; i < manuallyPrioritizedTasks.size(); i++) {
             assertEquals(manuallyPrioritizedTasks.get(i), priorityTasksArray[i]);

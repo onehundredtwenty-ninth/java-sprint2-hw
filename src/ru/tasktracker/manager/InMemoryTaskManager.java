@@ -99,6 +99,11 @@ public class InMemoryTaskManager implements TaskManager {
     public void createEpic(Epic epic) {
         epic.setId(getNextTaskId());
         epics.put(epic.getId(), epic);
+        if (!epic.getSubTasks().isEmpty()) {
+            for (SubTask subTask : epic.getSubTasks()) {
+                subTasks.put(subTask.getId(), subTask);
+            }
+        }
     }
 
     @Override

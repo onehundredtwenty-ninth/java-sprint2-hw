@@ -37,8 +37,10 @@ public class HttpTaskServer {
         httpTaskServer.createContext("/tasks/subtask/epic", new EpicSubtaskHandler());
         httpTaskServer.createContext("/tasks/history", new HistoryHandler());
         httpTaskServer.createContext("/tasks", new TasksHandler());
-        httpTaskServer.start();
+    }
 
+    public void start() {
+        httpTaskServer.start();
         System.out.println("HTTP-сервер запущен на " + PORT + " порту!");
     }
 

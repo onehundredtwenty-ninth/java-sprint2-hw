@@ -25,17 +25,20 @@ public class HTTPTaskManager extends FileBackedTasksManager {
 
         JsonArray jsonTasksArray = new JsonArray();
         for (Task task : getAllTasks().values()) {
-            jsonTasksArray.add(gson.toJson(task));
+            JsonObject jsonObject = gson.fromJson(gson.toJson(task), JsonObject.class);
+            jsonTasksArray.add(jsonObject);
         }
 
         JsonArray jsonEpicsArray = new JsonArray();
         for (Epic epic : getAllEpics().values()) {
-            jsonEpicsArray.add(gson.toJson(epic));
+            JsonObject jsonObject = gson.fromJson(gson.toJson(epic), JsonObject.class);
+            jsonEpicsArray.add(jsonObject);
         }
 
         JsonArray jsonSubtasksArray = new JsonArray();
         for (SubTask subTask : getAllSubTasks().values()) {
-            jsonSubtasksArray.add(gson.toJson(subTask));
+            JsonObject jsonObject = gson.fromJson(gson.toJson(subTask), JsonObject.class);
+            jsonSubtasksArray.add(jsonObject);
         }
 
         JsonArray jsonHistoryArray = new JsonArray();
@@ -54,7 +57,7 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         Gson gson = new Gson();
         HTTPTaskManager httpTaskManager = new HTTPTaskManager(serverUrl);
 
-        String returnedTaskManager = kvTaskClient.load(serverUrl);
+        String returnedTaskManager = kvTaskClient.load("manager");
         JsonObject returnedJsonTasksManager = gson.fromJson(returnedTaskManager, JsonObject.class);
 
         JsonArray jsonTasksArray = returnedJsonTasksManager.getAsJsonArray("tasks");

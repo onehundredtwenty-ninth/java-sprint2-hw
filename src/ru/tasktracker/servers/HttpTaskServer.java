@@ -20,7 +20,7 @@ public class HttpTaskServer {
 
     private HttpServer httpTaskServer;
     private static final int PORT = 8080;
-    private static final TaskManager taskManager = Managers.getDefaultFileBackedTasksManager();
+    private static final TaskManager taskManager = Managers.getDefault();
     private static final Gson gson = new Gson();
 
     public HttpTaskServer() {

@@ -1,5 +1,11 @@
 package ru.tasktracker.manager;
 
+import ru.tasktracker.exception.ManagerSaveException;
+import ru.tasktracker.tasks.Epic;
+import ru.tasktracker.tasks.SubTask;
+import ru.tasktracker.tasks.Task;
+import ru.tasktracker.tasks.TaskStatus;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -8,12 +14,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import ru.tasktracker.exception.ManagerSaveException;
-import ru.tasktracker.tasks.Epic;
-import ru.tasktracker.tasks.SubTask;
-import ru.tasktracker.tasks.Task;
-import ru.tasktracker.tasks.TaskStatus;
-
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private final Path storageFile;
@@ -21,6 +21,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public FileBackedTasksManager(Path storageFile) {
         super();
         this.storageFile = storageFile;
+    }
+
+    public FileBackedTasksManager(String storageFile) {
+        super();
+        this.storageFile = null;
     }
 
     @Override
@@ -89,7 +94,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         save();
     }
 
-    private void save() {
+    protected void save() {
         List<String> tasksAsCsv = new ArrayList<>();
         tasksAsCsv.addAll(getListCsvOfTasks(tasks));
         tasksAsCsv.addAll(getListCsvOfTasks(epics));

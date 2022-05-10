@@ -1,15 +1,11 @@
 package ru.tasktracker.manager;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class Managers {
 
     public static TaskManager getDefault() {
-        return new InMemoryTaskManager();
-    }
-
-    public static TaskManager getDefaultFileBackedTasksManager() {
-        return new FileBackedTasksManager(Paths.get("src/ru/tasktracker/storagefiles/StorageFile.txt"));
+        return new HTTPTaskManager("http://localhost:8078/");
     }
 
     public static HistoryManager getDefaultHistory() {

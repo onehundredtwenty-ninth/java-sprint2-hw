@@ -8,7 +8,7 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    protected static int tasksCounter = 0;
+    protected int tasksCounter = 0;
     protected Map<Integer, Epic> epics = new HashMap<>();
     protected Map<Integer, Task> tasks = new HashMap<>();
     protected Map<Integer, SubTask> subTasks = new HashMap<>();

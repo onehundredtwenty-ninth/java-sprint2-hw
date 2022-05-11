@@ -86,7 +86,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void createTask(Task task) {
         if (!hasIntersections(task)) {
-            task.setId(getNextTaskId());
+            if (task.getId() == 0) {
+                task.setId(getNextTaskId());
+            }
             tasks.put(task.getId(), task);
             prioritizedTasks.add(task);
         } else {
@@ -97,22 +99,23 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void createEpic(Epic epic) {
-        epic.setId(getNextTaskId());
-        epics.put(epic.getId(), epic);
-        if (!epic.getSubTasks().isEmpty()) {
-            for (SubTask subTask : epic.getSubTasks()) {
-                subTasks.put(subTask.getId(), subTask);
-            }
+        if (epic.getId() == 0) {
+            epic.setId(getNextTaskId());
         }
+        epics.put(epic.getId(), epic);
     }
 
     @Override
     public void createSubTask(SubTask subTask) {
         if (!hasIntersections(subTask)) {
-            subTask.setId(getNextTaskId());
+            if (subTask.getId() == 0) {
+                subTask.setId(getNextTaskId());
+            }
             if (epics.containsKey(subTask.getEpicId())) {
                 Epic epic = epics.get(subTask.getEpicId());
-                epic.addSubtask(subTask);
+                if (!epic.getSubTasks().contains(subTask)) {
+                    epic.addSubtask(subTask);
+                }
                 subTasks.put(subTask.getId(), subTask);
                 prioritizedTasks.add(subTask);
             } else {

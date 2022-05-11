@@ -1,12 +1,11 @@
 package ru.tasktracker.tests;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.tasktracker.manager.HTTPTaskManager;
 import ru.tasktracker.manager.Managers;
 import ru.tasktracker.manager.TaskManager;
-import ru.tasktracker.servers.HttpTaskServer;
 import ru.tasktracker.servers.KVServer;
 import ru.tasktracker.tasks.Epic;
 import ru.tasktracker.tasks.SubTask;
@@ -19,10 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
 
-    @BeforeAll
-    public static void startServer() throws IOException {
-        new KVServer().start();
-        new HttpTaskServer().start();
+    public KVServer kvServer;
+
+    @BeforeEach
+    public void startServer() throws IOException {
+        kvServer = new KVServer();
+        kvServer.start();
+    }
+
+    @AfterEach
+    public void stopServer() {
+        kvServer.stop();
     }
 
     @BeforeEach
@@ -32,8 +38,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
 
     @Test
     public void shouldReturnEmptyListOfTasksTest() {
-        TaskManager loadedTaskManager = HTTPTaskManager.loadFromServer(
-                "http://localhost:8078");
+        TaskManager loadedTaskManager = Managers.getDefault();
         assertEquals(0, loadedTaskManager.getAllTasks().size());
     }
 
@@ -42,8 +47,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         Epic workEpic = new Epic("Работка", "За денюжку");
         taskManager.createEpic(workEpic);
 
-        TaskManager loadedTaskManager = HTTPTaskManager.loadFromServer(
-                "http://localhost:8078");
+        TaskManager loadedTaskManager = Managers.getDefault();
         Epic epic = (Epic) loadedTaskManager.getTaskById(workEpic.getId());
 
         assertEquals(0, epic.getSubTasks().size());
@@ -60,8 +64,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         taskManager.createSubTask(pathToWorkSubTask);
         taskManager.createSubTask(didWorkSubTask);
 
-        TaskManager loadedTaskManager = HTTPTaskManager.loadFromServer(
-                "http://localhost:8078");
+        TaskManager loadedTaskManager = Managers.getDefault();
         Epic epic = (Epic) loadedTaskManager.getTaskById(workEpic.getId());
 
         assertEquals(2, epic.getSubTasks().size());
@@ -69,8 +72,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
 
     @Test
     public void shouldReturnEmptyHistoryListTest() {
-        TaskManager loadedTaskManager = HTTPTaskManager.loadFromServer(
-                "http://localhost:8078");
+        TaskManager loadedTaskManager = Managers.getDefault();
         System.out.println(loadedTaskManager.getAllTasks());
         System.out.println(loadedTaskManager.getAllEpics());
         System.out.println(loadedTaskManager.getAllSubTasks());
@@ -96,8 +98,7 @@ public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
         taskManager.createTask(keyTask);
         taskManager.getTaskById(workEpic.getId());
 
-        TaskManager loadedTaskManager = HTTPTaskManager.loadFromServer(
-                "http://localhost:8078");
+        TaskManager loadedTaskManager = Managers.getDefault();
 
         Epic loadedEpic = (Epic) loadedTaskManager.getTaskById(workEpic.getId());
         Task loadedTask = loadedTaskManager.getTaskById(buyTask.getId());

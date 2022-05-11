@@ -12,16 +12,17 @@ import ru.tasktracker.tasks.Task;
 public class HTTPTaskManager extends FileBackedTasksManager {
 
     private final KVTaskClient kvTaskClient;
+    private final Gson gson = new Gson();
 
     public HTTPTaskManager(String serverUrl) {
         super(serverUrl);
         kvTaskClient = new KVTaskClient(serverUrl);
+        loadFromServer();
     }
 
     @Override
     protected void save() {
         JsonObject jsonTasksManager = new JsonObject();
-        Gson gson = new Gson();
 
         JsonArray jsonTasksArray = new JsonArray();
         for (Task task : getAllTasks().values()) {
@@ -53,32 +54,31 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         kvTaskClient.put("manager", jsonTasksManager.toString());
     }
 
-    public static HTTPTaskManager loadFromServer(String serverUrl) {
-        Gson gson = new Gson();
-        HTTPTaskManager httpTaskManager = new HTTPTaskManager(serverUrl);
-
-        String returnedTaskManager = httpTaskManager.kvTaskClient.load("manager");
+    private void loadFromServer() {
+        String returnedTaskManager = kvTaskClient.load("manager");
+        if (returnedTaskManager.isBlank()) {
+            return;
+        }
         JsonObject returnedJsonTasksManager = gson.fromJson(returnedTaskManager, JsonObject.class);
 
         JsonArray jsonTasksArray = returnedJsonTasksManager.getAsJsonArray("tasks");
         for (JsonElement jsonTask : jsonTasksArray) {
-            httpTaskManager.createTask(gson.fromJson(jsonTask, Task.class));
+            createTask(gson.fromJson(jsonTask, Task.class));
         }
 
         JsonArray jsonEpicsArray = returnedJsonTasksManager.getAsJsonArray("epics");
         for (JsonElement jsonEpic : jsonEpicsArray) {
-            httpTaskManager.createEpic(gson.fromJson(jsonEpic, Epic.class));
+            createEpic(gson.fromJson(jsonEpic, Epic.class));
         }
 
         JsonArray jsonSubtasksArray = returnedJsonTasksManager.getAsJsonArray("subtasks");
         for (JsonElement jsonSubtask : jsonSubtasksArray) {
-            httpTaskManager.createSubTask(gson.fromJson(jsonSubtask, SubTask.class));
+            createSubTask(gson.fromJson(jsonSubtask, SubTask.class));
         }
 
         JsonArray jsonHistoryArray = returnedJsonTasksManager.getAsJsonArray("history");
         for (JsonElement jsonHistory : jsonHistoryArray) {
-            httpTaskManager.historyManager.add(httpTaskManager.getTaskById(jsonHistory.getAsInt()));
+            historyManager.add(getTaskById(jsonHistory.getAsInt()));
         }
-        return httpTaskManager;
     }
 }

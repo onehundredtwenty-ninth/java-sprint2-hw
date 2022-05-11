@@ -39,7 +39,7 @@ public class Main {
         taskManager.createTask(buyTask);
         taskManager.createTask(keyTask);
 
-        HTTPTaskManager httpTaskManager = HTTPTaskManager.loadFromServer("http://localhost:8078");
+        HTTPTaskManager httpTaskManager = (HTTPTaskManager) Managers.getDefault();
         System.out.println(httpTaskManager.getAllTasks());
         System.out.println(httpTaskManager.getAllSubTasks());
         System.out.println(httpTaskManager.getAllEpics());

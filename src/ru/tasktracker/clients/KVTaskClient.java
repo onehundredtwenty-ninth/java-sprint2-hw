@@ -22,7 +22,12 @@ public class KVTaskClient {
         HttpRequest request = HttpRequest.newBuilder().uri(url).GET().build();
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            apiKey = response.body();
+            if (response.statusCode() == 200) {
+                apiKey = response.body();
+            } else {
+                throw new IllegalStateException("Ожидался статус код 200 ОК, получен статус код " + response.statusCode()
+                        + ". Значение API_TOKEN не задано");
+            }
         } catch (IOException | InterruptedException e) { // обрабатываем ошибки отправки запроса
             System.out.println("Во время выполнения запроса ресурса по url-адресу: '" + url + "' возникла ошибка.\n" +
                     "Проверьте, пожалуйста, адрес и повторите попытку.");

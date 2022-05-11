@@ -53,11 +53,11 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         kvTaskClient.put("manager", jsonTasksManager.toString());
     }
 
-    protected HTTPTaskManager loadFromServer(String serverUrl) {
+    public static HTTPTaskManager loadFromServer(String serverUrl) {
         Gson gson = new Gson();
         HTTPTaskManager httpTaskManager = new HTTPTaskManager(serverUrl);
 
-        String returnedTaskManager = kvTaskClient.load("manager");
+        String returnedTaskManager = httpTaskManager.kvTaskClient.load("manager");
         JsonObject returnedJsonTasksManager = gson.fromJson(returnedTaskManager, JsonObject.class);
 
         JsonArray jsonTasksArray = returnedJsonTasksManager.getAsJsonArray("tasks");

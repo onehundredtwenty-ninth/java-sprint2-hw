@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -398,6 +399,47 @@ public class HTTPTaskServerTest {
 
         assertEquals(200, responseOfGetRequest.statusCode());
         assertEquals(0, actualTasks.length);
+    }
+
+    @Test
+    public void historyTest() throws IOException, InterruptedException {
+        URI urlForPostRequest = URI.create(serverUrl + "/tasks/task/");
+        final HttpRequest.BodyPublisher bodyOfFirstTask = HttpRequest.BodyPublishers.ofString(gson.toJson(initialFirstTask));
+        final HttpRequest.BodyPublisher bodyOfSecondTask = HttpRequest.BodyPublishers.ofString(gson.toJson(initialSecondTask));
+        HttpRequest POSTRequestForFirstTask = HttpRequest.newBuilder().uri(urlForPostRequest).POST(bodyOfFirstTask).build();
+        HttpRequest POSTRequestForSecondTask = HttpRequest.newBuilder().uri(urlForPostRequest).POST(bodyOfSecondTask).build();
+        client.send(POSTRequestForFirstTask, HttpResponse.BodyHandlers.ofString());
+        client.send(POSTRequestForSecondTask, HttpResponse.BodyHandlers.ofString());
+
+        URI urlForGetFirstRequest = URI.create(serverUrl + "/tasks/task/?id=" + initialFirstTask.getId());
+        HttpRequest GETFirstRequest = HttpRequest.newBuilder().uri(urlForGetFirstRequest).GET().build();
+        client.send(GETFirstRequest, HttpResponse.BodyHandlers.ofString());
+        URI urlForGetSecondRequest = URI.create(serverUrl + "/tasks/task/?id=" + initialSecondTask.getId());
+        HttpRequest GETSecondRequest = HttpRequest.newBuilder().uri(urlForGetSecondRequest).GET().build();
+        client.send(GETSecondRequest, HttpResponse.BodyHandlers.ofString());
+
+        URI urlForGetHistoryRequest = URI.create(serverUrl + "/tasks/task/?id=" + initialFirstTask.getId());
+        HttpRequest GETHistoryRequest = HttpRequest.newBuilder().uri(urlForGetHistoryRequest).GET().build();
+        HttpResponse<String> responseOfGetRequest = client.send(GETHistoryRequest, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(200, responseOfGetRequest.statusCode());
+    }
+
+    @Test
+    public void prioritizedTest() throws IOException, InterruptedException {
+        URI urlForPostRequest = URI.create(serverUrl + "/tasks/task/");
+        final HttpRequest.BodyPublisher bodyOfFirstTask = HttpRequest.BodyPublishers.ofString(gson.toJson(initialFirstTask));
+        final HttpRequest.BodyPublisher bodyOfSecondTask = HttpRequest.BodyPublishers.ofString(gson.toJson(initialSecondTask));
+        HttpRequest POSTRequestForFirstTask = HttpRequest.newBuilder().uri(urlForPostRequest).POST(bodyOfFirstTask).build();
+        HttpRequest POSTRequestForSecondTask = HttpRequest.newBuilder().uri(urlForPostRequest).POST(bodyOfSecondTask).build();
+        client.send(POSTRequestForFirstTask, HttpResponse.BodyHandlers.ofString());
+        client.send(POSTRequestForSecondTask, HttpResponse.BodyHandlers.ofString());
+
+        URI urlForGetRequest = URI.create(serverUrl + "/tasks/");
+        HttpRequest GETRequest = HttpRequest.newBuilder().uri(urlForGetRequest).GET().build();
+        HttpResponse<String> responseOfGetRequest = client.send(GETRequest, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(200, responseOfGetRequest.statusCode());
     }
 
 }

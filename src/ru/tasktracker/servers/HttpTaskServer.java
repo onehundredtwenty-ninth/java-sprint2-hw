@@ -68,7 +68,7 @@ public class HttpTaskServer {
                     if (query != null) {
                         response = gson.toJson(taskManager.getTaskById(getIdFromQueryString(query)));
                     } else {
-                        response = gson.toJson(taskManager.getAllTasks());
+                        response = gson.toJson(taskManager.getAllTasks().values());
                     }
                     httpExchange.sendResponseHeaders(200, 0);
                     break;
@@ -120,7 +120,7 @@ public class HttpTaskServer {
                     if (query != null) {
                         response = gson.toJson(taskManager.getTaskById(getIdFromQueryString(query)));
                     } else {
-                        response = gson.toJson(taskManager.getAllSubTasks());
+                        response = gson.toJson(taskManager.getAllSubTasks().values());
                     }
                     httpExchange.sendResponseHeaders(200, 0);
                     break;
@@ -172,7 +172,7 @@ public class HttpTaskServer {
                     if (query != null) {
                         response = gson.toJson(taskManager.getTaskById(getIdFromQueryString(query)));
                     } else {
-                        response = gson.toJson(taskManager.getAllEpics());
+                        response = gson.toJson(taskManager.getAllEpics().values());
                     }
                     httpExchange.sendResponseHeaders(200, 0);
                     break;
@@ -240,5 +240,9 @@ public class HttpTaskServer {
     private static int getIdFromQueryString(String query) {
         String[] queryParams = query.split("=");
         return Integer.parseInt(queryParams[1]);
+    }
+
+    public void stop() {
+        httpTaskServer.stop(0);
     }
 }
